@@ -291,6 +291,30 @@ app.post('/api/configs/publish', (req, res) => {
 });
 
 // --- Friends API ---
+app.post('/api/friends/sync', (req, res) => {
+  const { hwid, friends } = req.body;
+  if (!hwid) return res.status(400).json({ success: false, error: 'hwid required' });
+
+  if (!db.friends[hwid]) db.friends[hwid] = [];
+
+  if (Array.isArray(friends)) {
+    const set = new Set(db.friends[hwid].map(f => f.toLowerCase()));
+    for (const item of friends) {
+      const name = typeof item === 'string' ? item : (item?.name || item?.nickname);
+      if (name && typeof name === 'string' && name.trim()) {
+        const trimmed = name.trim();
+        if (!set.has(trimmed.toLowerCase())) {
+          set.add(trimmed.toLowerCase());
+          db.friends[hwid].push(trimmed);
+        }
+      }
+    }
+    saveDatabase();
+  }
+
+  res.json({ success: true, friends: db.friends[hwid] });
+});
+
 app.post('/api/friends/list', (req, res) => {
   const { hwid } = req.body;
   if (!hwid) return res.status(400).json({ success: false, error: 'hwid required' });
