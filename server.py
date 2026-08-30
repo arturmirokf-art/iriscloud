@@ -143,9 +143,9 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
-# --- Health & Keepalive ---
-@app.get("/")
-@app.get("/ping")
+# --- Health & Keepalive (GET & HEAD for UptimeRobot) ---
+@app.api_route("/", methods=["GET", "HEAD"])
+@app.api_route("/ping", methods=["GET", "HEAD"])
 def ping():
     return {
         "status": "online",
