@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: iris-cloud-server
+    env: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: PORT
+        value: 10000
